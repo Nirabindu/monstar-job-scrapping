@@ -1,0 +1,51 @@
+To Solve 403 Forbidden Errors When Web Scraping
+
+1. Fake user agents
+2. optimizing request header
+3. use Rotating Proxies
+
+
+Fake User agents:
+
+This will only work on relatively small scrapes, as if you use the same user-agent on every single request then a website with a more sophisticated anti-bot solution could easily still detect your scraper.
+we have to use list of fake user agents 
+
+
+Optimizing request header:
+
+In a lot of cases, just adding fake user-agents to your requests will solve the 403 Forbidden Error, however, if the website is has a more sophisticated anti-bot detection system in place you will also need to optimize the request headers.
+
+By default, most HTTP clients will only send basic request headers along with your requests such as Accept, Accept-Language, and User-Agent.
+
+how to detect fake user agents:
+If the website is really trying to prevent web scrapers from accessing their content, then they will be analysing the request headers to make sure that the other headers match the user-agent you set, and that the request includes other common headers a real browser would send.
+
+
+
+Use Rotating Proxies:
+If the above solutions don't work then it is highly likely that the server has flagged your IP address as being used by a scraper and is either throttling your requests or completely blocking them.
+
+This is especially likely if you are scraping at larger volumes, as it is easy for websites to detect scrapers if they are getting an unnaturally large amount of requests from the same IP address.
+
+
+from itertools import cycle
+
+list_proxy = [
+                'http://Username:Password@IP1:20000',
+                'http://Username:Password@IP2:20000',
+                'http://Username:Password@IP3:20000',
+                'http://Username:Password@IP4:20000',
+              ]
+
+proxy_cycle = cycle(list_proxy)
+proxy = next(proxy_cycle)
+
+for i in range(1, 10):
+    proxy = next(proxy_cycle)
+    print(proxy)
+    proxies = {
+      "http": proxy,
+      "https":proxy
+    }
+    r = requests.get(url='http://quotes.toscrape.com/page/1/', proxies=proxies)
+    print(r.text)
